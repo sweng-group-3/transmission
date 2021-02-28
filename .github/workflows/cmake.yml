@@ -50,9 +50,6 @@ jobs:
       shell: bash
       run: /opt/build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir /tmp/sonarcloud-wrapper-output make
 
-    - name: Debug
-      run: ls -lah /tmp/sonarcloud-wrapper-output
-
     - name: Run sonar-scanner
       working-directory: ${{github.workspace}}
       shell: bash
