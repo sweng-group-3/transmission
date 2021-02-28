@@ -60,7 +60,7 @@ jobs:
         /opt/sonar-scanner-cli/bin/sonar-scanner
         -D sonar.host.url="https://sonarcloud.io/"
         -D sonar.login="${{ secrets.SONAR_TOKEN }}"
-        -D sonar.exclusions="qt/translations/"
+        -D sonar.exclusions="${{github.workspace}}/qt/translations/"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
