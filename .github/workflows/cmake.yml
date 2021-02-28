@@ -39,7 +39,7 @@ jobs:
     - name: Create Build Environment
       run: mkdir ${{github.workspace}}/build && pwd
 
-    - name: Build
+    - name: Generate build configuration
       working-directory: ${{github.workspace}}/build
       shell: bash
       # Execute the build.  You can specify a specific target with "--target <NAME>"
