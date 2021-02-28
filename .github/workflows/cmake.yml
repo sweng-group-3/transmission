@@ -55,6 +55,7 @@ jobs:
       shell: bash
       run: >-
         /opt/sonar-scanner-cli/bin/sonar-scanner
+        -D sonar.cfamily.threads=2
         -D sonar.host.url="https://sonarcloud.io/"
         -D sonar.login="${{ secrets.SONAR_TOKEN }}"
         -D sonar.exclusions="${{github.workspace}}/qt/translations/"
