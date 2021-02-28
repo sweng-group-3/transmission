@@ -22,7 +22,20 @@ jobs:
     
     - name: Install Dependencies
       run: sudo apt install -y g++ libcurl4-openssl-dev libssl-dev libz-dev automake libtool qtbase5-dev qttools5-dev
-    
+
+    - name: Download sonarcloud build-wrapper
+      working-directory: /opt
+      shell: bash
+      run: wget https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip && unzip build-wrapper-linux-x86.zip
+
+    - name: Download SonarScanner
+      working-directory: /opt
+      shell: bash
+      run: >-
+        wget wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.0.2311-linux.zip && 
+        unzip sonar-scanner-cli-4.6.0.2311-linux.zip && 
+        mv sonar-scanner-cli-4.6.0.2311-linux sonar-scanner-cli
+
     - name: Create Build Environment
       run: mkdir ${{github.workspace}}/build && pwd
 
@@ -35,4 +48,10 @@ jobs:
     - name: Test Build
       working-directory: ${{github.workspace}}/build
       shell: bash
-      run: make
+      run: /opt/build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir /tmp/sonarcloud-wrapper-output make
+
+    - name: Run sonar-scanner
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      run: /opt/sonar-scanner-cli/bin/sonar-scanner
+      
