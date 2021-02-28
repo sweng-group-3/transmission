@@ -1628,7 +1628,7 @@ bool MainWindow::event(QEvent* e)
         }
     }
 
-    return QWidget::event(e);
+    return QMainWindow::event(e);
 }
 
 /***
