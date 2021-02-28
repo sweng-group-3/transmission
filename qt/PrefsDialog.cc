@@ -565,6 +565,7 @@ void PrefsDialog::initDownloadingTab()
     linkWidgetToPref(ui_.watchDirEdit, Prefs::DIR_WATCH);
     linkWidgetToPref(ui_.showTorrentOptionsDialogCheck, Prefs::OPTIONS_PROMPT);
     linkWidgetToPref(ui_.startAddedTorrentsCheck, Prefs::START);
+    linkWidgetToPref(ui_.pasteTorrentFromClipboard, Prefs::READ_CLIPBOARD);
     linkWidgetToPref(ui_.trashTorrentFileCheck, Prefs::TRASH_ORIGINAL);
     linkWidgetToPref(ui_.downloadDirButton, Prefs::DOWNLOAD_DIR);
     linkWidgetToPref(ui_.downloadDirEdit, Prefs::DOWNLOAD_DIR);
