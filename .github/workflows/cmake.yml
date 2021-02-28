@@ -51,7 +51,7 @@ jobs:
       run: /opt/build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir /tmp/sonarcloud-wrapper-output make
 
     - name: Run sonar-scanner
-      working-directory: ${{github.workspace}}/build
+      working-directory: ${{github.workspace}}
       shell: bash
       run: >-
         /opt/sonar-scanner-cli/bin/sonar-scanner
