@@ -307,7 +307,7 @@ MainWindow::MainWindow(Session& session, Prefs& prefs, TorrentModel& model, bool
     connect(&filter_model_, &TorrentFilter::rowsRemoved, this, refresh_header_soon);
     connect(ui_.listView, &TorrentView::headerDoubleClicked, filter_bar, &FilterBar::clear);
 
-    static std::array<int, 16> constexpr InitKeys =
+    static std::array<int, 17> constexpr InitKeys =
     {
         Prefs::ALT_SPEED_LIMIT_ENABLED,
         Prefs::COMPACT_VIEW,
@@ -317,6 +317,7 @@ MainWindow::MainWindow(Session& session, Prefs& prefs, TorrentModel& model, bool
         Prefs::MAIN_WINDOW_X,
         Prefs::RATIO,
         Prefs::RATIO_ENABLED,
+        Prefs::READ_CLIPBOARD,
         Prefs::SHOW_TRAY_ICON,
         Prefs::SORT_MODE,
         Prefs::SORT_REVERSED,
@@ -1241,6 +1242,12 @@ void MainWindow::refreshPref(int key)
             break;
         }
 
+    case Prefs::READ_CLIPBOARD:
+        {
+            b = prefs_.getBool(Prefs::READ_CLIPBOARD);
+            read_from_clipboard_ = b;
+        }
+
     default:
         break;
     }
@@ -1591,6 +1598,44 @@ void MainWindow::dropEvent(QDropEvent* event)
             trApp->addTorrent(AddData(key));
         }
     }
+}
+
+bool MainWindow::event(QEvent* e)
+{
+    if (e->type() == QEvent::WindowActivate && read_from_clipboard_)
+    {
+        QClipboard* clipboard = QGuiApplication::clipboard();
+        if (clipboard->text().trimmed().endsWith(QStringLiteral(".torrent"), Qt::CaseInsensitive) ||
+            clipboard->text().startsWith(QStringLiteral("magnet:"), Qt::CaseInsensitive))
+        {
+            QStringList list = clipboard->text().trimmed().split(QLatin1Char('\n'));
+
+            for (QString const& entry : list)
+            {
+                QString key = entry.trimmed();
+
+                if (!key.isEmpty())
+                {
+                    QUrl const url(key);
+
+                    if (url.isLocalFile())
+                    {
+                        key = url.toLocalFile();
+                    }
+
+                    static QStringList processed;
+
+                    if (!processed.contains(key))
+                    {
+                        processed.append(key);
+                        trApp->addTorrent(AddData(key));
+                    }
+                }
+            }
+        }
+    }
+
+    return QMainWindow::event(e);
 }
 
 /***

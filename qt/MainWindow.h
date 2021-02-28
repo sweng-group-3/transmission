@@ -90,6 +90,7 @@ protected:
     void contextMenuEvent(QContextMenuEvent*) override;
     void dragEnterEvent(QDragEnterEvent*) override;
     void dropEvent(QDropEvent*) override;
+    bool event(QEvent*) override;
 
 private slots:
     void addTorrents(QStringList const& filenames);
@@ -178,6 +179,7 @@ private:
     QWidget* filter_bar_ = {};
     QAction* alt_speed_action_ = {};
     QString error_message_;
+    bool read_from_clipboard_ = {};
 
     QString const total_ratio_stats_mode_name_ = QStringLiteral("total-ratio");
     QString const total_transfer_stats_mode_name_ = QStringLiteral("total-transfer");
