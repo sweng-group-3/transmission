@@ -50,6 +50,9 @@ jobs:
       shell: bash
       run: /opt/build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir /tmp/sonarcloud-wrapper-output make
 
+    - name: Debug
+      run: ls -lah /tmp/sonarcloud-wrapper-output
+
     - name: Run sonar-scanner
       working-directory: ${{github.workspace}}
       shell: bash
@@ -57,6 +60,7 @@ jobs:
         /opt/sonar-scanner-cli/bin/sonar-scanner
         -D sonar.host.url="https://sonarcloud.io/"
         -D sonar.login="${{ secrets.SONAR_TOKEN }}"
+        -D sonar.exclusions="qt/translations/"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
