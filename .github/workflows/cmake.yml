@@ -1,0 +1,64 @@
+name: CMake
+
+on: [push]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    # The CMake configure and build commands are platform agnostic and should work equally
+    # well on Windows or Mac.  You can convert this to a matrix build if you need
+    # cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Checkout submodules
+      run: git submodule update --init
+    
+    - name: Install Dependencies
+      run: sudo apt install -y g++ libcurl4-openssl-dev libssl-dev libz-dev automake libtool qtbase5-dev qttools5-dev
+
+    - name: Download sonarcloud build-wrapper
+      working-directory: /opt
+      shell: bash
+      run: wget https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip && unzip build-wrapper-linux-x86.zip
+
+    - name: Download SonarScanner
+      working-directory: /opt
+      shell: bash
+      run: >-
+        wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.0.2311-linux.zip && 
+        unzip sonar-scanner-cli-4.6.0.2311-linux.zip && 
+        mv sonar-scanner-4.6.0.2311-linux sonar-scanner-cli
+
+    - name: Create Build Environment
+      run: mkdir ${{github.workspace}}/build && pwd
+
+    - name: Generate build configuration
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      # Execute the build.  You can specify a specific target with "--target <NAME>"
+      run: cmake ${{github.workspace}}
+      
+    - name: Test Build
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      run: /opt/build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir /tmp/sonarcloud-wrapper-output make
+
+    - name: Run sonar-scanner
+      working-directory: ${{github.workspace}}
+      shell: bash
+      run: >-
+        /opt/sonar-scanner-cli/bin/sonar-scanner
+        -D sonar.cfamily.threads=2
+        -D sonar.host.url="https://sonarcloud.io/"
+        -D sonar.login="${{ secrets.SONAR_TOKEN }}"
+        -D sonar.exclusions="${{github.workspace}}/qt/translations/"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      

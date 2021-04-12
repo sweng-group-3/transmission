@@ -281,6 +281,7 @@ static struct tr_key_struct const my_static[] =
     Q("ratio-limit"),
     Q("ratio-limit-enabled"),
     Q("ratio-mode"),
+    Q("read-clipboard"),
     Q("recent-download-dir-1"),
     Q("recent-download-dir-2"),
     Q("recent-download-dir-3"),
